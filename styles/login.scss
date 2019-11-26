@@ -1,0 +1,27 @@
+body{
+    background: rgb(187,65,8);
+    background: linear-gradient(153deg, rgba(187,65,8,1) 0%, rgba(228,159,46,1) 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+html{
+    
+    height: 100%;
+}
+.container{
+    width: auto;
+    text-align: center;
+    #title{
+        color: white;
+        font-size: 40px;
+    }
+    #login-form{
+        width: 200px;
+        padding: 15px;
+        margin: auto;
+        background-color: white;
+        border-radius: 35px;
+        .form-group, .btn{
+            margin: 10px;
+        }
+    }
+}

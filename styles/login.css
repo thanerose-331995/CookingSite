@@ -1,0 +1,24 @@
+body {
+  background: #bb4108;
+  background: linear-gradient(153deg, #bb4108 0%, #e49f2e 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+html {
+  height: 100%; }
+
+.container {
+  width: auto;
+  text-align: center; }
+  .container #title {
+    color: white;
+    font-size: 40px; }
+  .container #login-form {
+    width: 200px;
+    padding: 15px;
+    margin: auto;
+    background-color: white;
+    border-radius: 35px; }
+    .container #login-form .form-group, .container #login-form .btn {
+      margin: 10px; }
+
+/*# sourceMappingURL=login.css.map */
