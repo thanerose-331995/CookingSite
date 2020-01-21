@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="http://localhost/Web-Apps/CookingSite/styles/main.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="http://localhost/Web-Apps/CookingSite/javascript/post-handling.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <button type="button"><a href="main.php">Home</a></button>
+    <h1>Search Results</h1>
+    <div id="profiles"></div>
+    <div class="container"></div>
+    <div id="selected-post"></div>
+</body>
+<script>
+
+    var loc = window.location.pathname;
+    var dir = loc.split("php")[0]; 
+
+    function ready(id) {
+        console.log("search: " + id);
+        $.get(dir + 'php/loads/load_search.php', { search: id },
+            function (res) {
+                res = JSON.parse(res);
+                loadResults(res);
+            }
+        )
+    };
+
+    function loadResults(data) {
+        $("#search-container").empty();
+
+        var posts = [];
+
+        data.forEach(res => {
+            console.log(res);
+            if (res['type'] == "PROFILE") {
+                var names = allUpper([res['first_name'], res['last_name']]);
+                $("#profiles").append(
+                    "<div class='mini-profile'>" +
+                    "<div class='mini-profile-icon' id='P"+res['id']+"'></div>" +
+                    "<h2><a href='./profile.php?id=" + res['id']+ "'>" + names[0] + " " + names[1] + "</a></h2>" +
+                    "</div>"
+                );
+
+                $("#P"+res['id']).css("background-image", "url(" + dir + "uploads/" + res['pfp_url'] + ")");
+
+            }
+            else {
+                posts.push(res);
+            }
+
+        });
+        getTags(posts);
+    }
+
+</script>

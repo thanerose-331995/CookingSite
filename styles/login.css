@@ -21,4 +21,7 @@ html {
     .container #login-form .form-group, .container #login-form .btn {
       margin: 10px; }
 
+input {
+  width: 300px; }
+
 /*# sourceMappingURL=login.css.map */

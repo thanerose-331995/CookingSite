@@ -20,8 +20,12 @@ html{
         margin: auto;
         background-color: white;
         border-radius: 35px;
+        
         .form-group, .btn{
             margin: 10px;
         }
     }
+}
+input{
+    width: 300px;
 }

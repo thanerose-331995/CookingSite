@@ -1,14 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="http://localhost/Web-Apps/CookingSite/styles/main.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="http://localhost/Web-Apps/CookingSite/javascript/post-handling.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    <h1>USER INFO</h1>
+    <div id="user-info">
+        <h1>USER INFO</h1>
+        <div id="profile-picture">
+            <div id="profile-picture-overlay" onclick="editImage()"></div>
+        </div>
+        <h3 id="name"></h3>
+    </div>
     <button><a href="logout.php">Logout</a></button>
     <button><a href="main.php">Home</a></button>
+    <button type="button" onclick="delProf()">Delete Profile</button>
+    <div class="container"></div>
+    <div id="selected-post"></div>
+    <div id="newImg">
+        <div>
+            <h2>Change Profile Picture</h2>
+            <h4>Upload a new image:</h4>
+            <form action="" method="post" enctype="multipart/form-data">
+                <h3>Image</h3>
+                <input type="file" name="fileToUpload" id="fileToUpload">
+                <input type="text" name="id" id="id">
+                <br>
+                <input type="submit" value="Create" name="send" id="send-button">
+            </form>
+        </div>
+    </div>
+    <div id="confirm">
+        <div>
+            <h2>Are You Sure?</h2>
+            <h4>Are you sure you want to delete your profile?</h4>
+            <button type="button" onclick="confirm(true)">Yes</button>
+            <button type="button" onclick="confirm(false)">No</button>
+        </div>
+    </div>
 </body>
+<script>
+
+    var loc = window.location.pathname;
+    var dir = loc.split("php")[0];
+    var profileID;
+
+    $(document).ready(function () {
+        //loadProfile();
+        $("#newImg").hide();
+        $("#id").hide();
+        $("#confirm").hide();
+    });
+
+    function ready(id) {
+        $("#id").val(id);
+        loadProfile(id);
+    }
+
+    function loadProfile(id) {
+        $.get(dir + "php/get_profile.php", { user_id: id, type: "null" },
+            function (res) {
+                res = JSON.parse(res);
+                var name = allUpper(res['first_name']);
+                $("#name").html("Welcome " + name);
+                $("#profile-picture").css("background-image", "url(" + dir + "uploads/" + res['pfp_url'] + ")");
+                profileID = res['id'];
+                loadPosts(res['id']);
+            })        
+    };
+
+    function editImage() {
+        $("#newImg").fadeIn(300);
+    }
+
+    function delProf(){
+        $("#confirm").show();
+    }
+
+    function confirm(confirm){
+        $("#confirm").hide();
+        if(confirm){
+            id = "USER:"+profileID;
+            del(id);
+            window.location.href = "./logout.php";
+        }
+
+    }
+    
+    //DELETE
+    function remove(id) {
+        del(id);
+        location.reload();
+    }
+
+
+</script>
+
 </html>

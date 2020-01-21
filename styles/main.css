@@ -1,0 +1,318 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: slategray; }
+
+#page-content {
+  background-color: #efefef;
+  margin: 20px;
+  width: calc(100% - 40px); }
+
+h1 {
+  margin: 0px; }
+
+#header {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: baseline; }
+  #header * {
+    margin: 0px 20px; }
+
+#newPost {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6); }
+  #newPost #new-post {
+    padding: 50px 7%;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    grid-template-rows: 70px repeat(4, 100px);
+    grid-template-areas: 'img    img     title   close' 'img    img     desc    submit' 'img    img     rec     ing' 'img    img     rec     ing' 'tags   tags    rec     ing'; }
+    #newPost #new-post div {
+      background-color: white;
+      padding: 10px; }
+    #newPost #new-post h3, #newPost #new-post p {
+      margin: 0px; }
+    #newPost #new-post .plus {
+      width: 20px;
+      height: 20px;
+      background-image: url("assets/plus.png");
+      background-size: cover; }
+    #newPost #new-post .add {
+      display: flex;
+      padding: 0px; }
+    #newPost #new-post .delete {
+      width: 2px;
+      height: 3px;
+      background-image: url("assets/minus.png");
+      background-size: cover; }
+    #newPost #new-post #post-title {
+      height: 70px;
+      grid-area: title; }
+    #newPost #new-post #post-desc {
+      grid-area: desc;
+      height: 100px textarea;
+        height-resize: none;
+        height-width: 50px;
+        height-height: auto; }
+    #newPost #new-post #post-image {
+      grid-area: img; }
+      #newPost #new-post #post-image #img-preview {
+        height: 300px;
+        width: auto;
+        background-color: grey;
+        background-size: cover;
+        background-position: center; }
+    #newPost #new-post #post-tags {
+      grid-area: tags;
+      height: auto; }
+    #newPost #new-post #post-recipe {
+      grid-area: rec; }
+      #newPost #new-post #post-recipe #recipe-container {
+        height: 250px;
+        overflow: scroll; }
+      #newPost #new-post #post-recipe .step {
+        display: flex; }
+        #newPost #new-post #post-recipe .step * {
+          margin: 0px 5px; }
+    #newPost #new-post #post-ingredients {
+      grid-area: ing; }
+      #newPost #new-post #post-ingredients #ingredient {
+        width: 90px; }
+      #newPost #new-post #post-ingredients #amount {
+        width: 30px; }
+      #newPost #new-post #post-ingredients .ing {
+        display: flex; }
+        #newPost #new-post #post-ingredients .ing * {
+          margin: 0px 5px; }
+    #newPost #new-post #post-send {
+      grid-area: submit; }
+    #newPost #new-post #post-close {
+      grid-area: close;
+      padding: 20px; }
+
+#sidebar {
+  background-color: #823c1a;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
+.container {
+  width: auto;
+  margin: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(200px, 3fr));
+  grid-gap: 10px; }
+  .container p, .container h3, .container h4, .container h5, .container h6 {
+    color: white;
+    margin: 0px 10px; }
+  .container h6 {
+    color: #823c1a; }
+  .container .post-container {
+    background-color: #dbdbdb;
+    padding: 5px; }
+  .container .post {
+    width: auto;
+    height: 300px;
+    background-color: #823c1a;
+    background-size: cover;
+    background-position: center; }
+    .container .post .overlay {
+      padding: 10px;
+      width: calc(100% - 20px);
+      height: calc(100% - 20px);
+      background-color: rgba(0, 0, 0, 0.4);
+      transition: 0.3s; }
+    .container .post:hover {
+      cursor: pointer; }
+      .container .post:hover .overlay {
+        background-color: rgba(0, 0, 0, 0); }
+  .container #sidebar {
+    grid-column-start: 4;
+    grid-row-start: 1;
+    grid-row-end: 5; }
+
+#selected-post {
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+  #selected-post div {
+    position: relative; }
+  #selected-post * {
+    text-align: center; }
+  #selected-post #close {
+    text-align: center; }
+  #selected-post button {
+    width: 100px;
+    color: black; }
+  #selected-post .post {
+    background-color: gainsboro;
+    height: 80%;
+    margin: 50px 100px;
+    margin-bottom: 5px;
+    padding: 10px;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-areas: 'img    title   title' 'img    rec     ing' 'desc   comm    comm';
+    grid-template-rows: max-content;
+    grid-template-columns: repeat(3, 1fr); }
+    #selected-post .post div {
+      padding: 10px; }
+    #selected-post .post h3, #selected-post .post h4, #selected-post .post h5, #selected-post .post h6 {
+      margin: 0px; }
+    #selected-post .post #this-image {
+      grid-area: img;
+      width: 100%;
+      padding: 0px;
+      background-size: cover;
+      background-position: center; }
+    #selected-post .post #desc {
+      grid-area: desc;
+      height: 50px; }
+      #selected-post .post #desc .likes-comments {
+        height: 50px;
+        padding: 0px;
+        text-align: center; }
+        #selected-post .post #desc .likes-comments * {
+          padding: 0px;
+          margin: 0px; }
+        #selected-post .post #desc .likes-comments .likes, #selected-post .post #desc .likes-comments .comm-numb {
+          margin: 0px 10px; }
+    #selected-post .post #title {
+      grid-area: title;
+      height: 30px; }
+    #selected-post .post #recipe {
+      grid-area: rec;
+      height: 250px; }
+    #selected-post .post #ingredients {
+      grid-area: ing;
+      height: 250px; }
+    #selected-post .post .item {
+      display: flex;
+      align-items: baseline;
+      flex-direction: row; }
+      #selected-post .post .item * {
+        margin: 0px 5px; }
+    #selected-post .post #comments {
+      grid-area: comm;
+      padding: 0px; }
+      #selected-post .post #comments #selected-post-comments {
+        height: 100px;
+        background-color: rgba(255, 255, 255, 0.6);
+        overflow: scroll; }
+        #selected-post .post #comments #selected-post-comments .comm {
+          display: flex;
+          flex-direction: row;
+          align-items: baseline;
+          justify-content: flex-start;
+          padding: 5px; }
+          #selected-post .post #comments #selected-post-comments .comm * {
+            margin: 0px; }
+          #selected-post .post #comments #selected-post-comments .comm .comm-info {
+            margin: 2px 5px;
+            padding: 0px;
+            display: flex;
+            flex-direction: row;
+            align-items: baseline; }
+            #selected-post .post #comments #selected-post-comments .comm .comm-info * {
+              margin: 0px 5px;
+              padding: 0px; }
+            #selected-post .post #comments #selected-post-comments .comm .comm-info .username {
+              color: indianred; }
+              #selected-post .post #comments #selected-post-comments .comm .comm-info .username:hover {
+                cursor: pointer; }
+
+.likes-comments {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline; }
+  .likes-comments .likes, .likes-comments .comm-numb {
+    display: flex;
+    align-items: baseline; }
+
+.like, .comm-icon {
+  width: 15px;
+  height: 15px;
+  margin: 0px;
+  padding: 0px;
+  background-size: cover; }
+
+.like {
+  background-image: url("assets/like-icon.png"); }
+
+.comm-icon {
+  background-image: url("assets/comment-icon.png"); }
+
+#profile-picture, #profile-picture #profile-picture-overlay {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 100px; }
+  #profile-picture:hover, #profile-picture #profile-picture-overlay:hover {
+    cursor: pointer; }
+  #profile-picture #profile-picture-overlay {
+    background-color: rgba(0, 0, 0, 0);
+    transition: 0.3s; }
+    #profile-picture #profile-picture-overlay:hover {
+      background-color: rgba(0, 0, 0, 0.6);
+      cursor: pointer; }
+
+#newImg {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex; }
+  #newImg div {
+    background-color: white;
+    padding: 15px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; }
+    #newImg div * {
+      margin: 5px; }
+
+#confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; }
+  #confirm div {
+    background-color: gainsboro;
+    width: max-content;
+    padding: 20px;
+    margin: auto;
+    margin-top: 100px;
+    text-align: center; }
+
+.mini-profile {
+  background-color: gainsboro;
+  display: flex;
+  margin: 30px; }
+  .mini-profile .mini-profile-icon {
+    width: 70px;
+    height: 70px;
+    background-size: cover;
+    background-position: center; }
+  .mini-profile h2 {
+    margin: 0px;
+    padding: 5px; }
+    .mini-profile h2:hover {
+      color: indianred;
+      text-decoration: underline;
+      cursor: pointer; }
+
+/*# sourceMappingURL=main.css.map */

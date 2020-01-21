@@ -1,20 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="http://localhost/Web-Apps/CookingSite/styles/main.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="http://localhost/Web-Apps/CookingSite/javascript/post-handling.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    <h1>Feed</h1>
-    <button><a href="profile.php">Profile</a></button>
-    <br>
-    <h3>New Post</h3>
-    <form action="" method="POST">
-        <input type="text" name="title" value="title">
-        <input type="text" name="new-post" value="post here">
-        <input type="submit" value="send">
-    </form>
+    <div id="page-content">
+        <div id="header">
+            <h1 id="test">HESTIA</h1>
+            <input type="text" placeholder="search..." id="search">
+        </div>
+        <br>
+        <div id="newPost">
+            <h1>New Post</h1>
+            <form action="" method="post" enctype="multipart/form-data" id="new-post">
+                <div id="post-title">
+                    <h3>Title</h3>
+                    <input type="text" name="title" id="title">
+                </div>
+                <div id="post-desc">
+                    <h3>Description</h3>
+                    <textarea rows="2" cols="20" maxlength="255" name="content" id="content"></textarea>
+                </div>
+                <div id="post-image">
+                    <h3>Image</h3>
+                    <div id="img-preview"></div>
+                    <input type="file" name="fileToUpload" id="fileToUpload">
+                </div>
+                <div id="post-tags">
+                    <h3>Tags</h3>
+                    <p>Please seperate by comma</p>
+                    <input type="text" name="tags">
+                </div>
+                <div id="post-recipe">
+                    <h3>Add New Step</h3>
+                    <div class="add">
+                        <input type="text" id="recipe-step">
+                        <img class="plus" onclick="addStep()">
+                    </div>
+                    <div id="recipe-container"></div>
+                    <input id="rec" type="hidden" name="rec">
+                </div>
+                <div id="post-ingredients">
+                    <h3>Add New Ingredients</h3>
+                    <div class="add">
+                        <input type="text" id="ingredient">
+                        <input type="number" min="0" id="amount">
+                        <select name="measurement" id="mes">
+                            <option value="L">L</option>
+                            <option value="mL">mL</option>
+                            <option value="g">g</option>
+                            <option value="cups">cups</option>
+                        </select>
+                        <img class="plus" onclick="addIngredient()">
+                    </div>
+                    <div id="ing-container"></div>
+                    <input id="ing" type="hidden" name="ing">
+                </div>
+                <div id="post-send">
+                    <input type="submit" value="Create" name="send" id="send-button">
+                    <p id="err-check"></p>
+                </div>
+                <input type="hidden" name="userID" id="userID">
+                <button type="button" onclick="closePost()" id="post-close">Close</button>
+            </form>
+        </div>
+        <div class="container">
+            <div id="sidebar">
+                <h3>New Post</h3>
+                <button type="button" onclick="revealPost()">New Post</button>
+                <div id="profile-picture" onclick="goToProfile()"></div>
+                <p id="users-name">Users Name</p>
+            </div>
+        </div>
+        <div id="selected-post"></div>
+        <button type="button" onclick="loadPosts('all')">Load More</button>
+    </div>
 </body>
+<script>
+
+    $(document).ready(function () {
+        $("#newPost").hide();
+        $("#send-button").hide();
+        $("#search").val("");
+        loadProfile();
+        loadPosts("all");
+    });
+
+
+    //HIDE AND SHOW POST
+    function revealPost() {
+        $("#newPost").show();
+        window.addEventListener('scroll', noScroll);
+    }
+    function closePost() {
+        $("#newPost").hide();
+        window.removeEventListener('scroll', noScroll);
+    }
+
+    //POST ERR CHECKING
+    $("#fileToUpload, #title, #content").change(function () {
+        checkPost()
+    })
+
+    function checkPost() {
+        $err = "";
+        $filename = $("#fileToUpload").val();
+        //ERR CHECK
+        if ($("#title").val() == "") {
+            $err = "Please enter a post title";
+        }
+        else if ($("#content").val() == "") {
+            $err = "Please enter some post content";
+        }
+        else if ($filename == "") {
+            $err = "Please upload an image";
+        }
+        else if (ingredients.length == 0) {
+            $err = "Please add at least one ingredient";
+        }
+        else if (steps.length == 0) {
+            $err = "Please add at least one step";
+        }
+        else {
+            var extension = $filename.replace(/^.*\./, '');
+            if (extension == "jpg" || extension == "png") {
+                $("#send-button").show();
+            }
+            else {
+                $err = "Please upload either a png or a jpg file";
+            }
+        }
+        $("#err-check").html($err);
+
+        if ($err != "") {
+            $("#send-button").hide();
+        }
+    }
+
+    //SHOW IMG PREVIEW
+    $("#fileToUpload").change(function () {
+        var url = URL.createObjectURL($("#fileToUpload").prop('files')[0]);
+        $("#img-preview").css("background-image", "url(" + url + ")");
+    })
+
+    //SEARCH
+    $("#search").on('keyup', function (e) {
+        if (e.keyCode === 13) {
+            console.log($("#search").val());
+            window.location.href = "./search.php?search=" + $("#search").val();
+        }
+    });
+
+    //ADD STEPS / INGREDIENTS
+    var steps = [];
+    var ingredients = [];
+
+    function addStep() {
+        var step = $("#recipe-step").val();
+        if (step != "") {
+            steps.push(step);
+        }
+        $("#recipe-step").val("");
+        drawSteps();
+    }
+
+    function drawSteps() {
+        $("#rec").val("");
+        $("#rec").val(steps.join("/"));
+        $("#recipe-container").empty();
+        steps.forEach(function (step, index) {
+            var clickstring = '"s' + index + '"';
+            $("#recipe-container").append(
+                "<div class='step'>" +
+                "<h4>" + (index + 1) + "</h4>" +
+                "<p>" + step + "</p>" +
+                "<div class='delete' onclick='remove(" + clickstring + ")'></div>" +
+                "</div>"
+            )
+        })
+        checkPost();
+    }
+
+    function addIngredient() {
+        var ing = $("#ingredient").val();
+        var quan = $("#amount").val();
+        var mes = $("#mes").val();
+        console.log(mes);
+        var string = ing + " " + quan + mes;
+        if (ing != "" && quan > 0 && mes != "") {
+            ingredients.push(string);
+            $("#ingredient").val("");
+            drawIngredients();
+        }
+    }
+
+    function drawIngredients() {
+        $("#ing").val("");
+        $("#ing").val(ingredients.join("/"));
+        $("#ing-container").empty();
+        ingredients.forEach(function (ing, index) {
+            var clickstring = '"i' + index + '"';
+            $("#ing-container").append(
+                "<div class='ing'>" +
+                "<h4>" + (index + 1) + "</h4>" +
+                "<p>" + ing + "</p>" +
+                "<div class='delete' onclick='remove(" + clickstring + ")'></div>" +
+                "</div>"
+            )
+        })
+        checkPost();
+    }
+
+    function remove(id) {
+        if (id[0] == 's') {
+            id = id.replace(id[0], "");
+            steps.splice(parseInt(id), 1);
+            drawSteps();
+        } else if (id[0] == 'i') {
+            id = id.replace(id[0], "");
+            ingredients.splice(parseInt(id), 1);
+            drawIngredients();
+        }
+    }
+
+    //REDIRECT TO PROFILE
+    function goToProfile() {
+        window.location.href = "./profile.php?id=" + userID;
+    }
+
+
+    //DELETE
+    function remove(id) {
+        del(id);
+        location.reload();
+    }
+
+    //PREVENT SCROLL
+    function noScroll() {
+        window.scrollTo(0, 0);
+    }
+
+</script>
+
 </html>
