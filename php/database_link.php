@@ -2,11 +2,11 @@
 function db()
 {
     //connection to database
-    $host       = '91.103.219.224';
+    $host       = '127.0.0.1';
     $port       = '3306';
-    $db         = 'webapps1_rosa';
-    $username   = 'webapps1_rosa';
-    $password   = 'rVvE8cay';
+    $db         = 'my_database';
+    $username   = 'root';
+    $password   =  null;
     $charset    = 'utf8mb4';
 
     $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";

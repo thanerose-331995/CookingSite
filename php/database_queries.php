@@ -50,6 +50,7 @@ function load_images($postID){
 }
 
 
+
 //GET ANYTHING
 function get($get, $table, $data){
     $res = db()->query("SELECT $get FROM $table WHERE $data");
