@@ -97,7 +97,7 @@ h1 {
       padding: 20px; }
 
 #sidebar {
-  background-color: #823c1a;
+  background-color: slategray;
   padding: 20px;
   display: flex;
   flex-direction: column;

@@ -1,9 +1,11 @@
 <!-- PROFILE INFO AND LOGOUT BUTTON -->
 <?php
 
-include 'database_link.php';
-include 'database_queries.php';
-include dirname(__DIR__) . '\pages\profile-page.html';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
+include $cd.'/pages/profile-page.html';
 
 session_start();
 
@@ -13,7 +15,8 @@ if ($_GET) {
 
 if ($_POST) {
     $id = $_POST["id"];
-    $dir = dirname(__DIR__) . "\uploads";
+    $dir = explode("php", getcwd())[0];
+    $dir = $dir . "/uploads";
     $file = $_FILES["fileToUpload"]["name"];
 
     //error check

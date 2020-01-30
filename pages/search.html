@@ -14,6 +14,7 @@
 <body>
     <button type="button"><a href="main.php">Home</a></button>
     <h1>Search Results</h1>
+    <h3 id="searchString"></h3>
     <div id="profiles"></div>
     <div class="container"></div>
     <div id="selected-post"></div>
@@ -25,6 +26,7 @@
 
     function ready(id) {
         console.log("search: " + id);
+        $("#searchString").html("Results for: "+id);
         $.get(dir + 'php/loads/load_search.php', { search: id },
             function (res) {
                 res = JSON.parse(res);
@@ -39,7 +41,6 @@
         var posts = [];
 
         data.forEach(res => {
-            console.log(res);
             if (res['type'] == "PROFILE") {
                 var names = allUpper([res['first_name'], res['last_name']]);
                 $("#profiles").append(

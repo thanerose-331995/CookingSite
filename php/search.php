@@ -1,8 +1,10 @@
 <?php
 
-include 'database_link.php';
-include 'database_queries.php';
-include dirname(__DIR__) . '\pages\search.html';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
+include $cd.'/pages/search.html';
 
 session_start();
 

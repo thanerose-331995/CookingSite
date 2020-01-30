@@ -1,6 +1,6 @@
 body {
-  background: #bb4108;
-  background: linear-gradient(153deg, #bb4108 0%, #e49f2e 100%);
+  background: slategray;
+  background: linear-gradient(153deg, slategray 0%, #59a6d3 100%);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
 html {
@@ -13,7 +13,7 @@ html {
     color: white;
     font-size: 40px; }
   .container #login-form {
-    width: 200px;
+    width: fit-content;
     padding: 15px;
     margin: auto;
     background-color: white;

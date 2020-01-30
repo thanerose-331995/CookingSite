@@ -6,6 +6,8 @@ session_start();
 
 session_destroy(); //kill session and return to start page
 
-include 'login.php';
+// $cd = $_SERVER["DOCUMENT_ROOT"];
+
+header("Location: /login.php");
 
 ?>

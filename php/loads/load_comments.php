@@ -1,12 +1,13 @@
 <?php
+$cd = $_SERVER["DOCUMENT_ROOT"];
 
-include dirname(__DIR__) . '\database_link.php';
-include dirname(__DIR__) . '\database_queries.php';
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 //GET COMMENTS
 
 if($_GET){
-    $res = get("*", "comments", ("post_id = ".$_GET['postID']));
+    $res = get("*", "comments", ["post_id",$_GET['postID']]);
     echo(json_encode($res));
 }
 

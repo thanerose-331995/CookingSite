@@ -1,10 +1,11 @@
 <?php
 
-include 'database_link.php';
-include 'database_queries.php';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 session_start();
-
 $user_created = false;
 
 if (!empty($_POST)) { //if input form is not empty (input is named _POST in html)
@@ -13,8 +14,8 @@ if (!empty($_POST)) { //if input form is not empty (input is named _POST in html
 
     if (strpos($username, '@') !== false && strpos($username, '.com') !== false) {
 
+        echo("check");
         $userExists = check_user($_POST['username']);
-
         if ($userExists) {
             echo ("this user exists");
         } else {
@@ -24,12 +25,13 @@ if (!empty($_POST)) { //if input form is not empty (input is named _POST in html
             $user_created = true;
         }
     } else {
-        echo ("username invalid");
+        echo ("username must be an email");
     }
 }
 
 if (!$user_created) {
-    include dirname(__DIR__) . '\pages\new-user-page.html';
+    include $cd.'/pages/new-user-page.html';
 } else {
-    header("Location: main.php");
+    echo("okay!");
+    header("Location: /php/main.php");
 }

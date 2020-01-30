@@ -19,7 +19,6 @@
         </div>
         <br>
         <div id="newPost">
-            <h1>New Post</h1>
             <form action="" method="post" enctype="multipart/form-data" id="new-post">
                 <div id="post-title">
                     <h3>Title</h3>
@@ -54,6 +53,7 @@
                         <input type="text" id="ingredient">
                         <input type="number" min="0" id="amount">
                         <select name="measurement" id="mes">
+                            <option value=""></option>
                             <option value="L">L</option>
                             <option value="mL">mL</option>
                             <option value="g">g</option>
@@ -182,7 +182,7 @@
                 "<div class='step'>" +
                 "<h4>" + (index + 1) + "</h4>" +
                 "<p>" + step + "</p>" +
-                "<div class='delete' onclick='remove(" + clickstring + ")'></div>" +
+                "<div class='delete' onclick='removeList(" + clickstring + ")'></div>" +
                 "</div>"
             )
         })
@@ -212,14 +212,14 @@
                 "<div class='ing'>" +
                 "<h4>" + (index + 1) + "</h4>" +
                 "<p>" + ing + "</p>" +
-                "<div class='delete' onclick='remove(" + clickstring + ")'></div>" +
+                "<div class='delete' onclick='removeList(" + clickstring + ")'></div>" +
                 "</div>"
             )
         })
         checkPost();
     }
 
-    function remove(id) {
+    function removeList(id) {
         if (id[0] == 's') {
             id = id.replace(id[0], "");
             steps.splice(parseInt(id), 1);

@@ -68,9 +68,13 @@
         $.get(dir + "php/get_profile.php", { user_id: id, type: "null" },
             function (res) {
                 res = JSON.parse(res);
+                console.log(res);
                 var name = allUpper(res['first_name']);
-                $("#name").html("Welcome " + name);
+                $("#name").html(name);
                 $("#profile-picture").css("background-image", "url(" + dir + "uploads/" + res['pfp_url'] + ")");
+                if(!res['is_user']){
+                    $("#profile-picture-overlay").hide();
+                }
                 profileID = res['id'];
                 loadPosts(res['id']);
             })        

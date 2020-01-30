@@ -1,7 +1,9 @@
 <?php
 
-include dirname(__DIR__) . '\database_link.php';
-include dirname(__DIR__) . '\database_queries.php';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 if($_GET){
 
@@ -42,9 +44,23 @@ if($_GET){
             array_push($results, $post);
         }
     }
-    echo(json_encode($results));
-    //GET POSTS
 
+    //TAGS
+    $tags = get_all("tags");
+
+    foreach($tags as $tag){
+        $name = $tag['name'];
+        if(strpos($name, $search) !== false){
+            $res = post_from_tag($tag['name']);
+            foreach($res as $r){
+                $r['type'] = "POST-CONTENT";
+                array_push($results, $r);
+            }
+        }
+    }
+
+
+    echo(json_encode($results));
 }
 
 ?>

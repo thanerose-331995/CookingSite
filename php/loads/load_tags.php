@@ -1,7 +1,9 @@
 <?php
 
-include dirname(__DIR__) . '\database_link.php';
-include dirname(__DIR__) . '\database_queries.php';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 $res = load_tags($_GET['id']);
 return $res;

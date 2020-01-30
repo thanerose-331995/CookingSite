@@ -3,14 +3,17 @@
 
 <?php
 
-include 'database_link.php';
-include 'database_queries.php';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 session_start();
 
 if (!empty($_POST)) { //if input form is not empty (err check)
 
     $res = login($_POST['username'], $_POST['password']);
+    // var_dump($res);
     if ($res) { //if result 1 (true) (because our find_user() function should find 1 result)
         $_SESSION['logged_in'] = true;
     }else{
@@ -23,9 +26,9 @@ $logged_in = $_SESSION['logged_in'] ?? false; //set to logged_in or false?
 
 if ($logged_in) {
     $_SESSION['username'] = $_POST['username'];
-    header("Location: main.php");
+    header("Location: /php/main.php");
 } else {
-    include dirname(__DIR__) . "\pages\login-page.html";
+    include $cd."/pages/login-page.html";
 }
 
 ?>

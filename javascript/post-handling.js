@@ -1,9 +1,9 @@
 
 var loc = window.location.pathname;
-var dir = loc.split("php")[0];
+var dir = loc.substring(0, loc.lastIndexOf('/'));
+
 
 $(document).ready(function () {
-    //loadPosts();
     $("#selected-post").hide();
 })
 
@@ -15,7 +15,7 @@ var user;
 var userID;
 
 function loadProfile() {
-    $.get(dir + "php/get_profile.php", { type: 'username' },
+    $.get("/php/get_profile.php", { type: 'username' },
         function (res) {
             res = JSON.parse(res);
             userID = res['id'];
@@ -24,7 +24,8 @@ function loadProfile() {
             var name = names[0] + " " + names[1];
 
             $("#users-name").html(name);
-            $("#profile-picture").css("background-image", "url(" + dir + "uploads/" + res['pfp_url'] + ")");
+            dir = dir.split("php")[0];
+            $("#profile-picture").css("background-image", "url(/uploads/" + res['pfp_url'] + ")");
 
         })
 };
@@ -43,12 +44,12 @@ function checkID(id) {
 function loadPosts(id) {
     var data;
     user = id;
-    $.get(dir + 'php/loads/load_posts.php', { posts: id },
+    $.get('/php/loads/load_posts.php', { posts: id },
         function (res) {
             res = JSON.parse(res)
             data = res;
             data.forEach(post => {
-                $.get(dir + 'php/get_profile.php', { user_id: post['user_id'], type: "null" },
+                $.get('/php/get_profile.php', { user_id: post['user_id'], type: "null" },
                     function (res) {
                         res = JSON.parse(res);
                         var fName = res['first_name'];
@@ -60,7 +61,6 @@ function loadPosts(id) {
             })
         }
     ).done(function () {
-
         getTags(data);
     });
 }
@@ -69,12 +69,12 @@ function loadPosts(id) {
 function getTags(data) {
     var count = 0;
     data.forEach(x => {
-        $.get(dir + '/php/loads/load_tags.php', { id: x['id'] },
+        $.get('/php/loads/load_tags.php', { id: x['id'] },
             function (res) {
                 var tagstring = "";
                 res = JSON.parse(res);
                 res.forEach(i => {
-                    tagstring += (i['name'] + " ");
+                    tagstring += (i['name'] + "_");
                 });
                 x['tags'] = tagstring;
                 count++;
@@ -91,7 +91,7 @@ function getTags(data) {
 function getImages(data) {
     var count = 0;
     data.forEach(x => {
-        $.get(dir + '/php/loads/load_images.php', { id: x['id'] },
+        $.get('/php/loads/load_images.php', { id: x['id'] },
             function (res) {
                 res = JSON.parse(res);
                 if (res.length == 0) {
@@ -143,9 +143,8 @@ function complete(data) {
                     "</div>" +
                     "</div>"
                 );
-                if (x['img_url'] != "") {
-                    $("#" + x['id']).css("background-image", "url(" + dir + "uploads/" + x['img_url'] + ")");
-                }
+                $("#" + x['id']).css("background-image", "url(/uploads/" + x['img_url'] + ")");
+
                 count++;
                 posts.push(x)
             }
@@ -163,6 +162,14 @@ function postClicked(id) {
     })
 
     var deleteString = '"POST:' + post['id'] + '"';
+    if (post['tags'] != "") {
+        var temp = post['tags'].split("_");
+        var tags = "";
+        temp.forEach(function (t, i) {
+            var loc
+            tags = tags + "<p><a href='/php/search.php?search=" + t + "'>" + t + "</a></p>";
+        })
+    }
     //ADD THE POST CONTENT
     $("#selected-post").fadeIn();
     $("#selected-post").empty();
@@ -185,6 +192,7 @@ function postClicked(id) {
         "<p>" + post['comments'] + "</p>" +
         "</div>" +
         "</div>" +
+        "<p>" + tags + "</p>" +
         "</div>" +
         "<div id='recipe'>" +
         "<h4>Recipe</h4>" +
@@ -228,10 +236,9 @@ function postClicked(id) {
                 "</div>");
         })
     }
+    console.log(post['img_url']);
 
-    if (post['img_url'] != "") {
-        $("#this-image").css("background-image", "url(" + dir + "uploads/" + post['img_url'] + ")");
-    }
+    $("#this-image").css("background-image", "url(/uploads/" + post['img_url'] + ")");
 
     checkID(post['user_id']);
 
@@ -249,7 +256,7 @@ function getComments(id) {
     $("#selected-post-comments").empty();
     //ADD COMMENTS FOR THIS POST
     comments = [];
-    $.get(dir + '/php/loads/load_comments.php', { postID: id },
+    $.get('/php/loads/load_comments.php', { postID: id },
         function (res) {
             res = JSON.parse(res);
             res.forEach(x => {
@@ -267,7 +274,7 @@ function getComments(id) {
                     "<div class='comm'>" +
                     "<h5>" + x['comment'] + "</h5>" +
                     "<div class='comm-info'>" +
-                    "<h5 class='username'><a href='./profile.php?id=" + x['user_id']+ "'>" + x['username'] + "</a></h5>" +
+                    "<h5 class='username'><a href='./profile.php?id=" + x['user_id'] + "'>" + x['username'] + "</a></h5>" +
                     "<h6>" + x['dT'].split(' ')[0] + "</h6>" +
                     "<div class='like' onclick='likeComment(" + x['id'] + "," + x['likes'] + "," + id + ")'></div>" +
                     "<h6>" + x['likes'] + "</h6>" +
@@ -285,7 +292,7 @@ function sendComment(id) {
 
     if ($("#comment").val() != "") {
 
-        $.get(dir + '/php/adds/add_comment.php',
+        $.get('/php/adds/add_comment.php',
             {
                 postID: id,
                 comment: $("#comment").val()
@@ -305,7 +312,7 @@ function sendComment(id) {
 
 //LIKE COMMENT/POST
 function likeComment(id, currentLikes, postID) {
-    $.get(dir + '/php/adds/add_like.php',
+    $.get('/php/adds/add_like.php',
         {
             type: "COMMENT",
             id: id,
@@ -319,7 +326,7 @@ function likeComment(id, currentLikes, postID) {
 }
 
 function likePost(id, currentLikes) {
-    $.get(dir + 'php/adds/add_like.php',
+    $.get('/php/adds/add_like.php',
         {
             type: "POST",
             id: id,
@@ -363,28 +370,25 @@ function del(string) {
         value = str[1];
     }
 
-    $.get(dir + '/php/delete.php', { table: table, column: column, value: value },
+    $.get('/php/delete.php', { table: table, column: column, value: value },
         function (res) {
             console.log(res);
         }
     ).done(function () {
-
     });
-    //DELETE FROM table WHERE something = something
-    //DELETE FROM posts WHERE id = id;
 }
 
 //GENERAL FUNCTIONS
-function allUpper(array){
-    if(typeof array == 'string'){
+function allUpper(array) {
+    if (typeof array == 'string') {
         //one word
         array = array.replace(array[0], array[0].toUpperCase());
         return array;
     }
-    else{
+    else {
         //multiple words
         var newArray = [];
-        array.forEach(word =>{
+        array.forEach(word => {
             word = word.replace(word[0], word[0].toUpperCase());
             newArray.push(word);
         });

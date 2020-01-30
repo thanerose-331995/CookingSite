@@ -1,8 +1,8 @@
 <?php
+$cd = $_SERVER["DOCUMENT_ROOT"];
 
-include dirname(__DIR__) . '\database_link.php';
-include dirname(__DIR__) . '\database_queries.php';
-
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 //ADD TO COMMENT TABLE
 session_start();
 

@@ -1,76 +1,143 @@
 <?php
 
-function login($username, $password){
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+//function for preparing the obj for execution
+function qString($res, $names, $values)
+{
+    if (gettype($values) == "array") {
+        foreach ($values as $i => $val) {
+            $res->bindParam($names[$i], $val);
+        }
+    } else {
+        $res->bindParam($names, $values);
+    }
+    return $res;
+}
+
+function login($username, $password)
+{
     $password = hash('sha256', $password);
-    $result = db()->query("SELECT * FROM users WHERE username='$username' AND password='$password'");
-    if ($result->rowCount()) {
+    $sql = "SELECT * FROM users WHERE username=:username AND password=:password";
+    $res = db()->prepare($sql);
+    $res = qString($res, [':username', ':password'], [$username, $password]);
+    $res = $res->execute();
+
+    var_dump($res);
+
+    if ($res) {
         return 1; //if exists it'll return 1, else 0
     }
 }
 
-function check_user($username){
-    $result = db()->query("SELECT * FROM users WHERE username='$username'");
-    if ($result->rowCount()) {
-        return $result->fetch(); //if exists it'll return 1, else 0
+function check_user($username)
+{
+    $sql = "SELECT * FROM users WHERE username=:username";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':username', $username);
+    $res->execute();
+
+    if ($res->rowCount()) {
+        return $res->fetch(); //if exists it'll return 1, else 0
     }
 }
 
-function check_tag($tag){
-    $res = db()->query("SELECT * FROM tags WHERE name='$tag'");
-    if($res->rowCount()){
+function check_tag($tag)
+{
+    $sql = "SELECT * FROM tags WHERE name=:name";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':name', $tag);
+    $res->execute();
+    if ($res->rowCount()) {
         return true;
     }
 }
 
 // get profile
-function get_profile($id){
-    $res = db()->query("SELECT user_profiles.* FROM users JOIN user_profiles ON user_profiles.id = users.id WHERE users.id = '$id'");
+function get_profile($id)
+{
+    $sql = "SELECT user_profiles.* FROM users JOIN user_profiles ON user_profiles.id = users.id WHERE users.id =:id";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':id', $id);
+    $res->execute();
     return $res->fetch();
 }
 
-function get_posts($username){
+function get_posts($username)
+{
 
-    if($username == "all"){
+    if ($username == "all") {
         $res = db()->query("SELECT * FROM posts");
+        $sql = "SELECT * FROM posts";
+    } else {
+        $sql = "SELECT 	posts.* FROM users JOIN posts WHERE posts.user_id =:username";
     }
-    else{        
-        $res = db()->query("SELECT 	posts.* FROM users JOIN posts WHERE posts.user_id = '$username'");
-    }
-    echo(json_encode($res->fetchAll()));
+    $res = db()->prepare($sql);
+    $res = qString($res, ':username', $username);
+    $res->execute();
+    echo (json_encode($res->fetchAll()));
 }
 
-function load_tags($postID){
-    $res = db()->query("SELECT tags.name FROM posts JOIN post_tags ON post_tags.post_id = posts.id JOIN tags ON post_tags.tag_id = tags.id WHERE posts.id = '$postID'");
-    echo(json_encode($res->fetchAll()));
+function load_tags($postID)
+{
+    $sql = "SELECT tags.name FROM posts JOIN post_tags ON post_tags.post_id = posts.id JOIN tags ON post_tags.tag_id = tags.id WHERE posts.id =:postID";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':postID', $postID);
+    $res->execute();
+    echo (json_encode($res->fetchAll()));
 }
 
-function load_images($postID){
-    $res = db()->query("SELECT	images.upload_path FROM post_images JOIN images	ON images.id = post_images.image_id WHERE post_images.post_id = '$postID'");
-    echo(json_encode($res->fetchAll()));
+function load_images($postID)
+{
+    $sql = "SELECT images.upload_path FROM post_images JOIN images	ON images.id = post_images.image_id WHERE post_images.post_id =:postID";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':postID', $postID);
+    $res->execute();
+    echo (json_encode($res->fetchAll()));
 }
 
-
+function post_from_tag($tag){
+    $res = db()->query("SELECT posts.* FROM tags JOIN post_tags ON post_tags.tag_id = tags.id JOIN posts ON post_tags.post_id = posts.id WHERE tags.name = '$tag'");
+    return $res->fetchAll();
+}
 
 //GET ANYTHING
-function get($get, $table, $data){
-    $res = db()->query("SELECT $get FROM $table WHERE $data");
+function get($get, $table, $data)
+{
+    $find = $data[0];
+    $val = $data[1];
+    $sql = "SELECT $get FROM $table WHERE $find = :val";
+    $res = db()->prepare($sql);
+    $res = qString($res, ':val', $val);
+    $res->execute();
     return $res->fetchAll();
 }
 
-function get_all($table){
-    $res = db()->query("SELECT * FROM $table");
+
+function get_all($table)
+{
+    $sql = "SELECT * FROM $table";
+    $res = db()->query($sql);
     return $res->fetchAll();
 }
 
-function get_id($table, $value, $input){
-    $res = db()->query("SELECT id FROM $table WHERE $value='$input'");
+function get_id($table, $value, $input)
+{
+    var_dump($table, $value, $input);
+    $sql = "SELECT id FROM $table WHERE :value=':input'";
+    $res = db()->prepare($sql);
+    $res = qString($res, [':value', ':input'], [$value, $input]);
+    $res->execute();
     return $res->fetch();
 }
 
 //UPDATE ANYTHING
-function update($table, $values, $where){
-    $result = db()->query("UPDATE $table SET $values WHERE $where");
-    return $result;
+function update($table, $values, $where)
+{
+    $res = db()->query("UPDATE $table SET $values WHERE $where");
+    return $res;
 }
 
 //ADD ANYTHING
@@ -90,20 +157,16 @@ function add($table, $parameters, $values)
             $values[$x] = "'" . $values[$x] . "'";
         }
     }
-
     //IMPLODE ARRAY TO REQUEST STRING
     $set1 = implode(", ", $parameters);
     $set2 = implode(", ", $values);
-
-    //DEBUG
-    //echo ("QUERY SENT: " . "INSERT INTO $table ($set1)  VALUES ($set2)" . " //// ");
-
     //SEND AND RETURN REQUEST
-    $result = db()->query("INSERT INTO $table ($set1)  VALUES ($set2)");
-    return $result;
+    $res = db()->query("INSERT INTO $table ($set1)  VALUES ($set2)");
+    return $res->rowCount();
 }
 
 //DELETE ANYTHING
-function remove($table, $column, $value){
+function remove($table, $column, $value)
+{
     $res = db()->query("DELETE FROM $table WHERE $column = $value");
 }

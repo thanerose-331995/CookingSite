@@ -1,7 +1,9 @@
 <?php
 
-include 'database_link.php';
-include 'database_queries.php';
+$cd = $_SERVER["DOCUMENT_ROOT"];
+
+include $cd.'/php/database_link.php';
+include $cd.'/php/database_queries.php';
 
 if($_GET){
     remove($_GET['table'], $_GET['column'], $_GET['value']);
